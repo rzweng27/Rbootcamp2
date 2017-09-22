@@ -1,0 +1,65 @@
+---
+title: "Bootcamp_Exercise1"
+author: "Regina Zweng"
+date: "9/22/2017"
+output: pdf_document
+---
+
+Exercise 1) Write a for loop statements so that it runs from 1:9 and prints the following output to your screen:
+
+
+
+
+
+
+
+
+*
+
+```{r}
+for(ii in 1:9){
+  if (ii < 9) {
+    cat("\n")
+    }
+    else{
+      cat("*")
+      }
+    }
+```
+
+Exercise 2) Modify your for loop so that it prints 10 asterisks, with each asterisk separated by exactly one ampersand sign (&), with no spaces or new line characters.
+
+```{r}
+for(ii in 1:10){
+  if (ii < 10) {
+    cat("*&")
+    }
+    else{
+      cat("*")
+      }
+    }
+```
+
+Exercise 3) by hand, figure out the initial values of these variables and values at the the start and end of each iteration of the loop
+
+```{r}
+dogs <- 10;
+for (i in 1:5){
+    dogs <- dogs + 1; 
+}
+#Initial value is 10, final value is 15
+###
+meatloaf <- 0; 
+for (i in 5:9){
+    meatloaf <- meatloaf - i + 1;
+    cat(meatloaf) 
+}
+#Initial value is 0. Final value is -30
+###
+bubbles <- 12;
+for (i in -1:-4){
+    bubbles <- i;
+}
+#Initial value is 12. Final value is -4
+```
+
