@@ -18,3 +18,5 @@ text(50,3,paste("rmax=",c1,"+",c2,"light"))
 
 # You can use ?round, ?text and ?paste to read about these commands
 # for working with plots  
+
+?plot.lm

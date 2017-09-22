@@ -100,7 +100,7 @@ is.matrix(x)
 9.6.0.0.1 Exercise
 
 #Download the hurricanes.csv file from the tutorial website: http://kingaa.github.io/R_Tutorial/hurricanes.csv. Examine the resulting data frame by printing it and using the str command. Note the class type of each variable.
-setwd("/Users/reginazweng/Documents/GitHub/Rbootcamp")
+setwd("/Users/reginazweng/Documents/GitHub/Rbootcamp2")
 hurricane <- read.csv("hurricanes.csv",comment.char='#')
 #Data
 Year      Name   MasFem MinPressure_before Minpressure_Updated.2014 Gender_MF Category alldeaths  NDAM
@@ -292,3 +292,97 @@ Elapsed.Yrs                                              Source  ZMasFem ZMinPre
 
 course.url <- "http://kingaa.github.io/R_Tutorial/"
 download.file(paste0(course.url,"Intro1.R"),destfile="Intro1.R",mode="w")
+
+light <- c(20,20,20,20,21,24,44,60,90,94,101)
+rmax <- c(1.73,1.65,2.02,1.89,2.61,1.36,2.37,2.08,2.69,2.32,3.67)
+
+plot(light, rmax)
+fit <- lm(rmax~light)
+summary(fit)
+abline(fit)
+
+download.file(paste0(course.url,"Intro2.R"),destfile="Intro2.R",mode="w")
+download.file(paste0(course.url,"ChlorellaGrowth.csv"),destfile="ChlorellaGrowth.csv",mode="w")
+X <- read.csv("ChlorellaGrowth.csv",comment.char='#')
+Light <- X[,1]
+rmax <- X[,2]
+
+#11.0.0.0.1 Exercise
+
+#Make a copy of Intro2.R under a new name, and modify the copy so that it does linear regression of algal growth rate on the natural log of light intensity, LogLight=log(Light), and plots the data appropriately. You should end up with a graph that resembles the following.
+#11.0.0.0.3 Exercise
+
+#Create a plot of growth rate versus light intensity with the xx-axis running from 0 to 120, and the yy-axis running from 1 to 4.
+
+par(cex=1.5,cex.main=0.9)
+plot(rmax~light,data=X,xlab="light intensity (uE/m2/s)",xlim=c(0,120),ylim=c(1,4),ylab="maximum growth rate (1/d)",pch=16) 
+# xlab and ylab are x and y axis labels, pch is "plotting character"
+# cex is 'character expansion' - cex=1.5 increases symbol & label sizes by 50%
+# cex.main sets the character expansion for the main title of the plot 
+
+title(main="Data from Fussmann et al. (2000) system")
+fit <- lm(rmax~Light)
+summary(fit); abline(fit) 
+
+# Next we get the regression equation to 'display itself' on the graph
+c1 <- round(fit$coef[1],digits=3)   # intercept	
+c2 <- round(fit$coef[2],digits=3) 	# slope
+text(50,3,paste("rmax=",c1,"+",c2,"light"))
+
+#Section 12
+phi <- 1
+for (k in 1:100) {
+  phi <- 1+1/phi
+  print(c(k,phi))
+}
+
+a <- 1.1
+b <- 0.001
+T <- seq(from=1,to=200,by=1)
+N <- numeric(length(T))
+n <- 2
+for (t in T) {
+  n <- a*n/(1+b*n)
+  N[t] <- n
+}
+plot(T,N)
+
+#12.1.0.0.1 Gotcha:
+#An alternative way to do the above might be something like
+N <- numeric(length(T))
+for (t in 1:length(T)) {
+  n <- a*n/(1+b*n)
+  N[t] <- n
+}
+
+#12.1.0.0.2 Exercise
+Check that this works with different vectors T. What happens when T has length 1? What happens when T has length 0? Why? To avoid this trap, it’s preferable to use seq_len, seq_along, or seq.int instead of the 1:n construction used above. This and many other R gotchas are described in the useful R Inferno (Burns 2012).
+T <- seq(from=1,to=2,by=1)
+T <- seq(from=1,to=1,by=1)
+plot(T,N)
+
+N <- numeric(length(T))
+for (t in 1:length(T)) {
+  n <- a*n/(1+b*n)
+  N[t] <- n
+}
+
+#12.2
+phi <- 20
+k <- 1
+while (k <= 100) {
+  phi <- 1+1/phi
+  print(c(k,phi))
+  k <- k+1
+}
+
+phi <- 20
+conv <- FALSE
+while (!conv) {
+  phi.new <- 1+1/phi
+  conv <- phi==phi.new
+  phi <- phi.new
+}
+
+rm(list=ls()) #deletes all variables from all scripts if working in console for a while. Good way to clear workspace
+ls() #lists all variables from scripts you are working on
