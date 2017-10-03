@@ -1,0 +1,183 @@
+---
+title: "Bootcamp Modeling Exercises"
+author: "Regina Zweng"
+date: "9/27/2017"
+output: html_document
+---
+In class we saw how to simulate discrete-time models (such as the discrete logistic growth model) in
+R, using a for loop. Now we will work with an alternative model for density-dependent population
+growth in discrete time, the Ricker model where K > 0 and r can take positive or negative values.
+
+(a) Write a function that runs the Ricker model, plots the result, and returns the time series as an
+output. At minimum, your function should take all parameter values and initial conditions as
+input arguments.
+```{r}
+#1. Setup
+#None needed, since the program is so simple
+
+#2. Set initial conditions and parameter values
+N0<-100
+RR<-0.05
+KK<-5000
+ttMax<-200
+#initialize variables to a vector of NA values
+NN<-matrix(NA,nrow=1,ncol=ttMax+1)
+NN[1]<-N0 #set first value to initial conditions
+
+#3 Perform Calculations
+#use a loop to iterate the model the desired number of times 
+for (tt in 1:ttMax){
+  NN[tt+1]<-NN[tt]*exp(RR*(1-(NN[tt]/KK)))}
+
+#4 Plot the results
+plot(1:(ttMax+1),NN,xlab="time", ylab="N", col="blue"
+     )
+
+#5 Write as a function
+RickerFun<-function(RR,N0,KK,ttMax,PLOTFLAG=1,output=1){
+
+  #initialize variables to a vector of NA values
+  NN<-matrix(NA,nrow=1,ncol=ttMax+1)
+  NN[1]<-N0 #set first value to initial conditions
+  for (tt in 1:ttMax){
+    NN[tt+1]<-NN[tt]*exp(RR*(1-(NN[tt]/KK)))}
+  
+  if (PLOTFLAG==0){
+  plot(1:(ttMax+1),NN,xlab="time", ylab="N", col="blue",type='l',main=RR
+  )}
+  if(output==1)
+  {return(NN)}
+  }
+
+#Example
+RickerFun(-0.5,100,5000,20,PLOTFLAG=0,output=0)
+```
+
+(b) Explore the dynamics of the model. Try to find combinations of parameter values that yield
+the following patterns:
+• Population decreases to n = 0.
+• Population approaches stable equilibrium at n
+∗ = K, without oscillations.
+• Decaying oscillations around n
+∗ = K.
+• Persistent, regular oscillations.
+• Crazy, random-looking fluctuations (chaos).
+Which parameter is the key driver of these patterns?
+
+```{r}
+#Population decreases to n=0. Must have a negative RR
+RickerFun(-0.1,100,1000,200,PLOTFLAG=0,output=0)
+
+#Population approaches stable equilibrium at n∗ = K, without oscillations. Must have a positive RR.
+RickerFun(0.1,100,1000,200,PLOTFLAG=0,output=0)
+
+#Decaying oscillations around n∗ = K.
+RickerFun(2,100,1000,200,PLOTFLAG=0,output=0)
+
+#Persistent, regular oscillations.
+RickerFun(2.2,100,1000,200,PLOTFLAG=0,output=0)
+
+# Crazy, random-looking fluctuations (chaos).
+RickerFun(3,100,1000,200,PLOTFLAG=0,output=0)
+#The Key parameter to change is RR (r)
+
+```
+
+(c) Choose six interesting values of this parameter. Write a script that makes an array of six plots
+showing the model dynamics for each of these values.
+
+```{r}
+# Define parameter values; use a vector to hold a range of values for the parameter(s) you wish to vary.
+growthRate<-c(-0.1,0,0.1,2,2.5,3)
+
+par(mfrow=c(3,2),mar=c(4,4,3,2))
+for (ii in 1:length(growthRate)){
+  RickerOutput<-RickerFun(RR=growthRate[ii],100,1000,200,PLOTFLAG=0,output=0)
+}
+```
+
+(d) Imagine n0 = 20 and K = 1000 for a certain population of deer that is growing according to
+the Ricker model. You are a wildlife manager, and are concerned about how long it will take
+for the population to reach half of its carrying capacity. That is, you want to know tK/2
+, the
+first year that nt ≥ K/2. Suppose your output time series is called nVec. Write an R command
+that will determine the index of the first element of nVec that is ≥ K/2.
+
+```{r}
+N0<-20
+KK<-1000
+RR<-1.05
+tt<-seq(1,100,by=1)
+nVec<-rep(NA,length(tt))
+for (ii in 1:length(tt)){nVec<-RickerFun(RR,N0,KK,tt[ii])}
+
+which(nVec>=500)[1]
+```
+
+(e) Write a script that runs the necessary simulations and collects the necessary data to plot how
+tK/2 depends on r, for the range of r from 0.1 to 0.9.
+```{r}
+#initialize parameters
+rrVec<-seq(0.1,0.9,by=0.1)
+N0<-20
+KK<-1000
+tt<-50
+
+# initialize vector with null values
+nnVec <- rep(NA, 1, length(rrVec))
+
+# loop over values of key parameter, and run model for each value
+for (ii in 1:length(rrVec)) {
+  RickerOutput <- RickerFun(N0, RR=rrVec[ii], KK,
+  tt)
+  nnVec[ii] <- RickerOutput[ii]
+}
+# plot the results
+par(mfrow=c(1,1),mar=c(4,4,3,2))
+plot(rrVec, nnVec, xlab='Instantaneous growth rate, r_d',
+ylab=paste('Population at time = '),
+type='b', col='red', main='Sensitivity to value of r_d')
+```
+
+(f) Write pseudo-code to do a joint sensitivity analysis for two parameters. That is, choose a vector
+of values you’d like to consider for both r and K, and choose a simple output from your model
+(e.g. population size at t = 10). Run the model for all possible combinaioins of these values
+and collect the results in a matrix with appropriate dimensions. Plot the results in some way.
+Hint: the straight-forward way to do this uses a ‘nested loop’.
+```{r}
+#Initialize variables
+
+# initialize matrix with null values for storage of results
+
+# loop over values of key parameters in a nested "for" loop that stores results in matrix
+
+# plot the results with a 3D contour or perspective plot
+
+```
+
+(g) Convert your pseudo-code into an R script to do a two-dimensional sensitivity analysis, and
+create a visually appealing plot to summarize the results. (You will need to google for plotting
+commands, e.g. contour or surface plots).
+```{r}
+#Initialize variables
+rrVec<-seq(0.1,1.0,by=0.1)
+N0<-20
+KK<-seq(100,1000,by=100)
+tt<-30
+
+# initialize matrix to store d with null values
+NN<-matrix(NA,nrow=length(rrVec),ncol=length(KK))
+
+# loop over values of key parameter, and run model for each value
+for (ii in 1:length(rrVec)) {
+  for (jj in 1:length(KK)) {
+  RickerOutput<-RickerFun(N0, RR=rrVec[ii], KK[jj],
+  tt)
+  NN[ii,jj]<-RickerOutput[10]}
+  }
+
+RickerOutput
+# plot the results with a 3D contour or perspective plot
+par(mfrow=c(1,1),mar=c(4,4,3,2))
+persp(NN, expand=0.2)
+```

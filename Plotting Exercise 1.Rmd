@@ -64,6 +64,7 @@ counts_hundred<-hist(mean_heights_100,breaks=bins)$counts
 counts_thousand<-hist(mean_heights_1000,breaks=bins)$counts
 
 par(mfrow=c(1,1),mar=c(4,4,3,2))
-barplot(rbind(counts_hundred,counts_thousand),col=c(2,4),beside=T,xlab="Average Height (inches)",ylab="Count")
+barplot(rbind(counts_hundred,counts_thousand),col=c(2,4),beside=T,xlab="Average Height (inches)",names.arg=
+seq(65,74.5,by=0.5),ylab="Count")
 legend(x=0,y=400,legend=c("n=100","n=1000"),col=c(2,4),lwd=4)
 ```
